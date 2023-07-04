@@ -3,6 +3,6 @@ export interface UserModel {
   email: string
   password: string
   salt: string
-  phone: string
+  phoneNumber: string
   userType: 'BUYER' | 'SELLER'
 }

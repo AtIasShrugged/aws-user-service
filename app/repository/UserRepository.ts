@@ -6,11 +6,11 @@ export class UserRepository {
     const client = DbClient()
     await client.connect()
 
-    const { email, password, salt, phone, userType } = user
+    const { email, password, salt, phoneNumber, userType } = user
 
     const query =
       'INSERT INTO "user"(email,password,salt,phone,user_type) VALUES($1,$2,$3,$4,$5) RETURNING *;'
-    const values = [email, password, salt, phone, userType]
+    const values = [email, password, salt, phoneNumber, userType]
     const result = await client.query(query, values)
 
     await client.end()
@@ -23,7 +23,7 @@ export class UserRepository {
     const client = DbClient()
     await client.connect()
 
-    const query = 'SELECT id, email, phone, user_type, password FROM "user" WHERE email = $1'
+    const query = 'SELECT id, email, phone_number, user_type, password FROM "user" WHERE email = $1'
     const values = [email]
     const result = await client.query(query, values)
 

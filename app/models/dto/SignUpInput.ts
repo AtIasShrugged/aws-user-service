@@ -8,5 +8,5 @@ export class SignUpInput {
   password: string
 
   @Length(10, 12)
-  phone: string
+  phoneNumber: string
 }

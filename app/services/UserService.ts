@@ -29,7 +29,7 @@ export class UserService {
       const data = await this.repository.createUser({
         email: input.email,
         password: hashedPassword,
-        phone: input.phone,
+        phoneNumber: input.phoneNumber,
         userType: 'BUYER',
         salt,
       })
@@ -66,7 +66,7 @@ export class UserService {
     if (payload) {
       const { code, expiry } = generateAccessCode()
 
-      const res = await sendVerificationCode(code, payload.phone)
+      const res = await sendVerificationCode(code, payload.phoneNumber)
       return SuccessResponse({
         message: 'verification code is sent to your phone number by sms',
       })

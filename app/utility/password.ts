@@ -16,12 +16,12 @@ export const validatePassword = async (inputPassword: string, savedPassword: str
   return bcrypt.compare(inputPassword, savedPassword)
 }
 
-export const generateToken = async ({ id, email, phone, userType }: UserModel) => {
+export const generateToken = async ({ id, email, phoneNumber, userType }: UserModel) => {
   return jwt.sign(
     {
       id,
       email,
-      phone,
+      phoneNumber,
       userType,
     },
     secret,
