@@ -1,0 +1,38 @@
+{
+  "name": "user-service",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "sls offline",
+    "deploy": "sls deploy --verbose"
+  },
+  "dependencies": {
+    "@middy/core": "^4.5.3",
+    "@middy/http-json-body-parser": "^4.5.3",
+    "@types/aws-lambda": "^8.10.119",
+    "aws-lambda": "^1.0.7",
+    "aws-serverless-express": "^3.4.0",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "pg": "^8.11.1",
+    "reflect-metadata": "^0.1.13",
+    "ts-node": "^10.9.1",
+    "tsyringe": "^4.8.0",
+    "twilio": "^4.13.0",
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/pg": "^8.10.2",
+    "serverless-offline": "^12.0.4",
+    "serverless-plugin-typescript": "^2.1.5"
+  }
+}
