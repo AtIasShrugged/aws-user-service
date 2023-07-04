@@ -28,11 +28,11 @@ const validatePassword = (inputPassword, savedPassword) => __awaiter(void 0, voi
     return bcrypt_1.default.compare(inputPassword, savedPassword);
 });
 exports.validatePassword = validatePassword;
-const generateToken = ({ id, email, phone, userType }) => __awaiter(void 0, void 0, void 0, function* () {
+const generateToken = ({ id, email, phoneNumber, userType }) => __awaiter(void 0, void 0, void 0, function* () {
     return jsonwebtoken_1.default.sign({
         id,
         email,
-        phone,
+        phoneNumber,
         userType,
     }, secret, {
         expiresIn: '30d',

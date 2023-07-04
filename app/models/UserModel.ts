@@ -5,4 +5,9 @@ export interface UserModel {
   salt: string
   phoneNumber: string
   userType: 'BUYER' | 'SELLER'
+  firstName?: string
+  lastName?: string
+  profilePic?: string
+  verification_code?: number
+  expiry?: string
 }

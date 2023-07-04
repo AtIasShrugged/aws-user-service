@@ -25,7 +25,7 @@ exports.signUp = (0, core_1.default)((event) => {
 exports.signIn = (0, core_1.default)((event) => {
     return service.signIn(event);
 }).use((0, http_json_body_parser_1.default)());
-const verify = (event) => __awaiter(void 0, void 0, void 0, function* () {
+exports.verify = (0, core_1.default)((event) => {
     const httpMethod = event.requestContext.http.method.toLowerCase();
     switch (httpMethod) {
         case 'get':
@@ -33,10 +33,9 @@ const verify = (event) => __awaiter(void 0, void 0, void 0, function* () {
         case 'post':
             return service.verifyUser(event);
         default:
-            return (0, response_1.ErrorResponse)(404, 'requested method is not supported!');
+            return service.responseWithError(event);
     }
-});
-exports.verify = verify;
+}).use((0, http_json_body_parser_1.default)());
 const profile = (event) => __awaiter(void 0, void 0, void 0, function* () {
     const httpMethod = event.requestContext.http.method.toLowerCase();
     switch (httpMethod) {

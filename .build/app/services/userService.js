@@ -24,12 +24,18 @@ const class_transformer_1 = require("class-transformer");
 const errors_1 = require("../utility/errors");
 const dto_1 = require("../models/dto/");
 const password_1 = require("../utility/password");
+const date_helpers_1 = require("../utility/date-helpers");
 const UserRepository_1 = require("../repository/UserRepository");
 const response_1 = require("../utility/response");
 const notification_1 = require("../utility/notification");
 let UserService = exports.UserService = class UserService {
     constructor(repository) {
         this.repository = repository;
+    }
+    responseWithError(event) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (0, response_1.ErrorResponse)(404, 'requested method is not supported');
+        });
     }
     signUp(event) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -43,7 +49,7 @@ let UserService = exports.UserService = class UserService {
                 const data = yield this.repository.createUser({
                     email: input.email,
                     password: hashedPassword,
-                    phone: input.phone,
+                    phoneNumber: input.phoneNumber,
                     userType: 'BUYER',
                     salt,
                 });
@@ -79,18 +85,36 @@ let UserService = exports.UserService = class UserService {
         return __awaiter(this, void 0, void 0, function* () {
             const token = event.headers.authorization;
             const payload = yield (0, password_1.verifyToken)(token);
-            if (payload) {
-                const { code, expiry } = (0, notification_1.generateAccessCode)();
-                const res = yield (0, notification_1.sendVerificationCode)(code, payload.phone);
-                return (0, response_1.SuccessResponse)({
-                    message: 'verification code is sent to your phone number by sms',
-                });
-            }
+            if (!payload)
+                return (0, response_1.ErrorResponse)(403, 'authorization failed');
+            const { code, expiry } = (0, notification_1.generateAccessCode)();
+            yield this.repository.setVerificationCode(payload.id, code, expiry);
+            // const res = await sendVerificationCode(code, payload.phoneNumber)
+            return (0, response_1.SuccessResponse)({
+                message: 'verification code is sent to your phone number by sms',
+            });
         });
     }
     verifyUser(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, response_1.SuccessResponse)({ message: 'response from verifyUser' });
+            const token = event.headers.authorization;
+            const payload = yield (0, password_1.verifyToken)(token);
+            if (!payload)
+                return (0, response_1.ErrorResponse)(403, 'authorization failed');
+            const input = (0, class_transformer_1.plainToClass)(dto_1.VerificationCodeInput, event.body);
+            const error = yield (0, errors_1.inputValidation)(input);
+            if (error)
+                return (0, response_1.ErrorResponse)(404, error);
+            const { verification_code, expiry } = yield this.repository.findUser(payload.email);
+            if (verification_code === +input.code) {
+                const currentTime = new Date();
+                const timeDifferance = (0, date_helpers_1.datetimeComparsion)(expiry, currentTime.toISOString(), 'm');
+                if (timeDifferance < 0)
+                    return (0, response_1.ErrorResponse)(403, 'verification code is expired');
+                this.repository.verifyUser(payload.id);
+                console.log('verified successfully');
+            }
+            return (0, response_1.SuccessResponse)({ message: 'user verified' });
         });
     }
     getProfile(event) {

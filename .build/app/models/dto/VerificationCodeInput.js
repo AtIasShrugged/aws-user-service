@@ -9,21 +9,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SignUpInput = void 0;
+exports.VerificationCodeInput = void 0;
 const class_validator_1 = require("class-validator");
-class SignUpInput {
+class VerificationCodeInput {
 }
-exports.SignUpInput = SignUpInput;
+exports.VerificationCodeInput = VerificationCodeInput;
 __decorate([
-    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.Length)(6),
     __metadata("design:type", String)
-], SignUpInput.prototype, "email", void 0);
-__decorate([
-    (0, class_validator_1.Length)(6, 32),
-    __metadata("design:type", String)
-], SignUpInput.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.Length)(10, 12),
-    __metadata("design:type", String)
-], SignUpInput.prototype, "phoneNumber", void 0);
-//# sourceMappingURL=SignUpInput.js.map
+], VerificationCodeInput.prototype, "code", void 0);
+//# sourceMappingURL=VerificationCodeInput.js.map

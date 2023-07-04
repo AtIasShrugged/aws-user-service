@@ -16,4 +16,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./SignInInput"), exports);
 __exportStar(require("./SignUpInput"), exports);
+__exportStar(require("./VerificationCodeInput"), exports);
 //# sourceMappingURL=index.js.map
