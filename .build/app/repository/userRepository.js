@@ -64,9 +64,58 @@ let UserRepository = exports.UserRepository = class UserRepository {
             const values = [userId];
             const result = yield this.dbConnector.executeQuery(query, values);
             if (result.rowCount < 1) {
+                throw new Error('user already verified');
+            }
+            return result.rows[0];
+        });
+    }
+    fillOutProfile(userId, payload) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { firstName, lastName, userType, address } = payload;
+            yield this.updateProfile(userId, firstName, lastName, userType);
+            const query = 'INSERT INTO "user_address"(user_id, address_line1, address_line2, city, post_code, country) VALUES($1,$2,$3,$4,$5,$6) RETURNING *';
+            const values = [
+                userId,
+                address.addressLine1,
+                address.addressLine2,
+                address.city,
+                address.postCode,
+                address.country,
+            ];
+            const result = yield this.dbConnector.executeQuery(query, values);
+            if (result.rowCount < 1) {
                 throw new Error('wrong data');
             }
             return result.rows[0];
+        });
+    }
+    updateProfile(userId, firstName, lastName, userType) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = 'UPDATE "user" SET first_name=$1, last_name=$2, user_type=$3 WHERE id = $4 RETURNING *';
+            const values = [firstName, lastName, userType, userId];
+            const result = yield this.dbConnector.executeQuery(query, values);
+            if (result.rowCount < 1) {
+                throw new Error('wrong data');
+            }
+            return result.rows[0];
+        });
+    }
+    getUserProfile(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const profileQuery = 'SELECT first_name, last_name, email, phone_number, user_type, verified FROM "user" WHERE id = $1';
+            const profileValues = [userId];
+            const profileResult = yield this.dbConnector.executeQuery(profileQuery, profileValues);
+            if (profileResult.rowCount < 1) {
+                throw new Error('user profile does not exist');
+            }
+            const profile = profileResult.rows[0];
+            const addressQuery = 'SELECT id, address_line1, address_line2, city, post_code, country FROM "user_address" WHERE user_id = $1';
+            const addressValues = [userId];
+            const addresses = yield this.dbConnector.executeQuery(addressQuery, addressValues);
+            if (addresses.rowCount > 0) {
+                profile.addresses = addresses.rows;
+            }
+            return profile;
         });
     }
 };

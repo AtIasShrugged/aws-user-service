@@ -27,7 +27,7 @@ export const verify = middy((event: APIGatewayProxyEventV2) => {
   }
 }).use(jsonBodyParser())
 
-export const profile = async (event: APIGatewayProxyEventV2) => {
+export const profile = middy((event: APIGatewayProxyEventV2) => {
   const httpMethod = event.requestContext.http.method.toLowerCase()
   switch (httpMethod) {
     case 'get':
@@ -37,9 +37,9 @@ export const profile = async (event: APIGatewayProxyEventV2) => {
     case 'put':
       return service.updateProfile(event)
     default:
-      return ErrorResponse(404, 'requested method is not supported!')
+      return service.responseWithError(event)
   }
-}
+}).use(jsonBodyParser())
 
 export const cart = async (event: APIGatewayProxyEventV2) => {
   const httpMethod = event.requestContext.http.method.toLowerCase()

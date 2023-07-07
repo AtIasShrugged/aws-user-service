@@ -2,7 +2,7 @@ import { autoInjectable } from 'tsyringe'
 import { plainToClass } from 'class-transformer'
 import { APIGatewayProxyEventV2 } from 'aws-lambda'
 import { inputValidation } from '../utility/errors'
-import { SignInInput, SignUpInput, VerificationCodeInput } from '../models/dto/'
+import { SignInInput, SignUpInput, UserProfileInput, VerificationCodeInput } from '../models/dto/'
 import {
   generateToken,
   getSalt,
@@ -22,6 +22,8 @@ export class UserService {
   async responseWithError(event: APIGatewayProxyEventV2) {
     return ErrorResponse(404, 'requested method is not supported')
   }
+
+  /*              --- User Auth ---               */
 
   async signUp(event: APIGatewayProxyEventV2) {
     try {
@@ -103,17 +105,36 @@ export class UserService {
     return SuccessResponse({ message: 'user verified' })
   }
 
+  /*              --- User Profile ---               */
+
   async getProfile(event: APIGatewayProxyEventV2) {
-    return SuccessResponse({ message: 'response from getProfile' })
+    const token = event.headers.authorization
+    const payload = await verifyToken(token)
+    if (!payload) return ErrorResponse(403, 'authorization failed')
+
+    const result = await this.repository.getUserProfile(payload.id)
+
+    return SuccessResponse(result)
   }
 
   async createProfile(event: APIGatewayProxyEventV2) {
-    return SuccessResponse({ message: 'response from createProfile' })
+    const token = event.headers.authorization
+    const payload = await verifyToken(token)
+    if (!payload) return ErrorResponse(403, 'authorization failed')
+
+    const input = plainToClass(UserProfileInput, event.body)
+    const error = await inputValidation(input)
+    if (error) return ErrorResponse(404, error)
+
+    const result = await this.repository.fillOutProfile(payload.id, input)
+    return SuccessResponse(result)
   }
 
   async updateProfile(event: APIGatewayProxyEventV2) {
     return SuccessResponse({ message: 'response from editProfile' })
   }
+
+  /*              --- User Cart ---               */
 
   async getCart(event: APIGatewayProxyEventV2) {
     return SuccessResponse({ message: 'response from getCart' })
@@ -126,6 +147,8 @@ export class UserService {
   async updateCart(event: APIGatewayProxyEventV2) {
     return SuccessResponse({ message: 'response from updateCart' })
   }
+
+  /*              --- User Payments ---               */
 
   async addPaymentMethod(event: APIGatewayProxyEventV2) {
     return SuccessResponse({ message: 'response from addPaymentMethod' })

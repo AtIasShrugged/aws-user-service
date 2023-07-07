@@ -36,7 +36,7 @@ exports.verify = (0, core_1.default)((event) => {
             return service.responseWithError(event);
     }
 }).use((0, http_json_body_parser_1.default)());
-const profile = (event) => __awaiter(void 0, void 0, void 0, function* () {
+exports.profile = (0, core_1.default)((event) => {
     const httpMethod = event.requestContext.http.method.toLowerCase();
     switch (httpMethod) {
         case 'get':
@@ -46,10 +46,9 @@ const profile = (event) => __awaiter(void 0, void 0, void 0, function* () {
         case 'put':
             return service.updateProfile(event);
         default:
-            return (0, response_1.ErrorResponse)(404, 'requested method is not supported!');
+            return service.responseWithError(event);
     }
-});
-exports.profile = profile;
+}).use((0, http_json_body_parser_1.default)());
 const cart = (event) => __awaiter(void 0, void 0, void 0, function* () {
     const httpMethod = event.requestContext.http.method.toLowerCase();
     switch (httpMethod) {

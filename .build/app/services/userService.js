@@ -37,6 +37,7 @@ let UserService = exports.UserService = class UserService {
             return (0, response_1.ErrorResponse)(404, 'requested method is not supported');
         });
     }
+    /*              --- User Auth ---               */
     signUp(event) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -117,14 +118,29 @@ let UserService = exports.UserService = class UserService {
             return (0, response_1.SuccessResponse)({ message: 'user verified' });
         });
     }
+    /*              --- User Profile ---               */
     getProfile(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, response_1.SuccessResponse)({ message: 'response from getProfile' });
+            const token = event.headers.authorization;
+            const payload = yield (0, password_1.verifyToken)(token);
+            if (!payload)
+                return (0, response_1.ErrorResponse)(403, 'authorization failed');
+            const result = yield this.repository.getUserProfile(payload.id);
+            return (0, response_1.SuccessResponse)(result);
         });
     }
     createProfile(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, response_1.SuccessResponse)({ message: 'response from createProfile' });
+            const token = event.headers.authorization;
+            const payload = yield (0, password_1.verifyToken)(token);
+            if (!payload)
+                return (0, response_1.ErrorResponse)(403, 'authorization failed');
+            const input = (0, class_transformer_1.plainToClass)(dto_1.UserProfileInput, event.body);
+            const error = yield (0, errors_1.inputValidation)(input);
+            if (error)
+                return (0, response_1.ErrorResponse)(404, error);
+            const result = yield this.repository.fillOutProfile(payload.id, input);
+            return (0, response_1.SuccessResponse)(result);
         });
     }
     updateProfile(event) {
@@ -132,6 +148,7 @@ let UserService = exports.UserService = class UserService {
             return (0, response_1.SuccessResponse)({ message: 'response from editProfile' });
         });
     }
+    /*              --- User Cart ---               */
     getCart(event) {
         return __awaiter(this, void 0, void 0, function* () {
             return (0, response_1.SuccessResponse)({ message: 'response from getCart' });
@@ -147,6 +164,7 @@ let UserService = exports.UserService = class UserService {
             return (0, response_1.SuccessResponse)({ message: 'response from updateCart' });
         });
     }
+    /*              --- User Payments ---               */
     addPaymentMethod(event) {
         return __awaiter(this, void 0, void 0, function* () {
             return (0, response_1.SuccessResponse)({ message: 'response from addPaymentMethod' });

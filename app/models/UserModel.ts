@@ -1,5 +1,7 @@
+import { UserAddressModel } from './UserAddressModel'
+
 export interface UserModel {
-  id?: string
+  id?: number
   email: string
   password: string
   salt: string
@@ -10,4 +12,5 @@ export interface UserModel {
   profilePic?: string
   verification_code?: number
   expiry?: string
+  addresses?: UserAddressModel[]
 }
